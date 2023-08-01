@@ -17,20 +17,20 @@ blogRouter.post('/', async (req, res) => {
         content, 
         comments
     });
-    const result = await post.save();
-    res.send(result);
+    await post.save();
+    
 });
 
 // R - Read
 
 blogRouter.get('/', async (req, res) => {
-    const posts = await Post.find().select('-__v -_id');
+    const posts = await Post.find().select('-__v');
     res.send(posts);
 });
 
-blogRouter.get('/:author', async (req, res) => {
+blogRouter.get('/:title', async (req, res) => {
     const post = await Post.find({
-        author: req.params.author,
+        title: req.params.title,
     }).select('-__v -_id')
     if(!post.length) {
         return res.status(404).send(`Not found`);
@@ -41,13 +41,13 @@ blogRouter.get('/:author', async (req, res) => {
 
 // U - Update
     
-blogRouter.put('/:title', async (req, res) => {
+blogRouter.put('/:id', async (req, res) => {
     const reqKeys = ['author', 'title', 'content', 'tags', 'comments']
 	const validKey = []
 	const inValidKey = []
 
 	try {
-		const post = await Post.findOne({ title: req.params.title })
+		const post = await Post.findById(req.params.id)
 		if (!post) {
 			return res.status(404).send('Post Not Found')
 		}
@@ -84,9 +84,9 @@ blogRouter.put('/:title', async (req, res) => {
 
 // D - Delete
 
-blogRouter.delete('/:query', async  (req, res) => {
+blogRouter.delete('/:id', async  (req, res) => {
     try {
-        const post = await Post.findOneAndRemove({ title: req.params.query });
+        const post = await Post.findByIdAndRemove(req.params.id);
        
         if(!post) {
             return res.status(404).send('Post not found')
