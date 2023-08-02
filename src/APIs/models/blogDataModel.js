@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const startup = require('debug')('startup');
 
 const postSchema = new mongoose.Schema({
 	author: {

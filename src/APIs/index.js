@@ -3,6 +3,7 @@ const cors = require('cors')
 const mongoose = require('mongoose');
 const startup = require('debug')('startup');
 const app = express();
+const userRouter = require('./routes/userRoute')
 const blogRouter = require('./routes/blogRoute')
 app.use(express.json());
 
@@ -12,6 +13,7 @@ mongoose.connect('mongodb://localhost/blog')
 
 app.use(cors({ origin: 'http://localhost:3001' }))
 
+app.use('/api/user', userRouter);
 app.use('/api/blog', blogRouter)
 
 // Port

@@ -1,12 +1,8 @@
-import { Routers } from "./Routers"
-import { BrowserRouter } from "react-router-dom"
-
+import { Post } from "../postComponent/Post"
 export function Main() {
     return (
         <main>
-            <BrowserRouter>
-                <Routers/>
-            </BrowserRouter>
+            <Post/>
         </main>
     )
 }

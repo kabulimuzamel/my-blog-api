@@ -8,15 +8,12 @@ export function Header() {
                 bg='dark'
                 data-bs-theme='light'>
                 <Container>
-                    <Navbar.Brand className='text-bg-dark' href='#'>
+                    <Navbar.Brand className='text-bg-dark' href='/UserPage'>
                         My blog
                     </Navbar.Brand>
                     <Nav className='me-auto'>
-                        <Nav.Link className='text-bg-dark' href='/createAPost'>
+                        <Nav.Link className='text-bg-dark' href='/UserPage/createAPost'>
                             Create a Post
-                        </Nav.Link>
-                        <Nav.Link className='text-bg-dark' href='/editAPost'>
-                            Edit a Post
                         </Nav.Link>
                     </Nav>
                 </Container>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { Header } from "../bodyComponent/Header";
 
 export function CreatePost() {
     const [author, setAuthor] = useState('');
@@ -8,7 +9,7 @@ export function CreatePost() {
     const [tags, setTags] = useState('');
     
     const submitPost = (e) => {
-        if(author === '') {
+        if(author === '' && title === '' && content === '') {
             alert('Please enter something')
         } else {
 
@@ -32,46 +33,50 @@ export function CreatePost() {
     
 
     return (
-			<Container style={{ width: '1000px' }}>
-				<Form className="position-relative">
-					<Form.Group>
-						<Form.Label>Author</Form.Label>
-						<Form.Control
-							value={author}
-							onChange={(e) => setAuthor(e.target.value)}
-                            placeholder="Your name goes here..."
-						/>
-					</Form.Group>
-					<Form.Group>
-						<Form.Label>Title</Form.Label>
-						<Form.Control
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Your title goes here..."
-						/>
-					</Form.Group>
-					<Form.Group>
-						<Form.Label>Content</Form.Label>
-						<Form.Control
-                            as="textarea"
-							value={content}
-							onChange={(e) => setContent(e.target.value)}
-                            style={
-                                {
-                                    height: '300px', 
-                                    resize: 'vertical', 
-                                    overflowX: 'hidden',
-                                    msOverflowX: 'scroll',
-                                    wordWrap: 'break-word',
-                                }
-                            }
-							placeholder="Your writing goes here..."
-						/>
-					</Form.Group>
-					<Button className="position-absolute mt-4 end-0" type='submit' onClick={submitPost}>
-						Create a post
-					</Button>
-				</Form>
-			</Container>
-		)
+        <>
+            <Header/>
+            <Container style={{ width: '1000px' }}>
+                <Form className='position-relative'>
+                    <Form.Group>
+                        <Form.Label className="text-light">Author</Form.Label>
+                        <Form.Control
+                            className="text-bg-dark"
+                            value={author}
+                            onChange={(e) => setAuthor(e.target.value)}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="text-light">Title</Form.Label>
+                        <Form.Control
+                            className="text-bg-dark"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="text-light">Content</Form.Label>
+                        <Form.Control
+                            className="text-bg-dark"
+                            as='textarea'
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            style={{
+                                height: '300px',
+                                resize: 'vertical',
+                                overflowX: 'hidden',
+                                msOverflowX: 'scroll',
+                                wordWrap: 'break-word',
+                            }}
+                        />
+                    </Form.Group>
+                    <Button
+                        className='position-absolute mt-4 end-0'
+                        type='submit'
+                        onClick={submitPost}>
+                        Create a post
+                    </Button>
+                </Form>
+            </Container>
+        </>
+    )
 }
