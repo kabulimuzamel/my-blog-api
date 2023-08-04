@@ -1,14 +1,19 @@
 const Joi = require('joi');
 const express = require('express');
 const blogRouter = express.Router();
+const User = require('../models/userDataModel')
 const Post = require('../models/blogDataModel');
+const authToken = require('../middleware/authToken')
 
 // CRUD
 
 // C - Create
 
-blogRouter.post('/', async (req, res) => {
-    validatePost(req.body, res);
+blogRouter.post('/', authToken, async (req, res) => {
+    const { error } = validatePost(req.body, res);
+    if(error) {
+        res.status(400).json({ error: error.details[0].message })
+    }
     const { author, title, tags, content, comments } = req.body;
     const post = new Post({
         author, 
@@ -18,15 +23,36 @@ blogRouter.post('/', async (req, res) => {
         comments
     });
     await post.save();
-    
 });
 
-// R - Read
 
+// R - Read
 blogRouter.get('/', async (req, res) => {
     const posts = await Post.find().select('-__v');
     res.send(posts);
 });
+
+async function authenticateUser(req, res, next) {
+    const { userName, password } = req.body;
+    const user = await User.find({
+        $and: [
+            { userName: userName },
+            { password: password }
+        ]
+    });
+
+    if(!user) {
+        res.status(401).json({ error: 'The entered username or password is wrong' })
+    }
+
+    next();
+}
+
+
+// blogRouter.get('/:userName', authenticateUser, async (req, res) => {
+//     const posts = await Post.find({ userName: req.params.userName }).select('-__v');
+//     res.send(posts);
+// });
 
 blogRouter.get('/:title', async (req, res) => {
     const post = await Post.find({
@@ -41,7 +67,7 @@ blogRouter.get('/:title', async (req, res) => {
 
 // U - Update
     
-blogRouter.put('/:id', async (req, res) => {
+blogRouter.put('/:id', authToken, async (req, res) => {
     const reqKeys = ['author', 'title', 'content', 'tags', 'comments']
 	const validKey = []
 	const inValidKey = []
@@ -84,7 +110,7 @@ blogRouter.put('/:id', async (req, res) => {
 
 // D - Delete
 
-blogRouter.delete('/:id', async  (req, res) => {
+blogRouter.delete('/:id', authToken, async  (req, res) => {
     try {
         const post = await Post.findByIdAndRemove(req.params.id);
        
@@ -108,13 +134,8 @@ function validatePost(req, res) {
         comments: Joi.string(),
     });
 
-    const { error } = schema.validate(req);
-
-    if(error) {
-        return (
-            res.status(400).send(error.details[0].message)
-        )
-    }
+    const result = schema.validate(req);
+    return result;
 }
 
 module.exports = blogRouter;

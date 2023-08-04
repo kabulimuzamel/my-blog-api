@@ -4,6 +4,8 @@ import { CreateUserPage } from './userComponent/CreateUserPage';
 import { Routes, Route } from 'react-router-dom';
 import { HomePage } from './HomePage/HomePage';
 import { CreatePost } from './postComponent/CreatePost';
+import { LoginPage } from './HomePage/LoginPage';
+import { RoutesProtection } from './HomePage/RoutesProtection';
 
 
 function App() {
@@ -11,9 +13,12 @@ function App() {
 		<div className='App'>
 			<Routes>
 				<Route path='/HomePage' element={<HomePage />} />
-				<Route path='/CreateUserPage' element={<CreateUserPage />} />
-				<Route path='/UserPage' element={<UserPage />} />
-				<Route path='/UserPage/createAPost' element={<CreatePost />} />
+				<Route path='/HomePage/LoginPage' element={<LoginPage/>}/>
+				<Route path='/HomePage/CreateUserPage' element={<CreateUserPage />} />
+				<Route element={<RoutesProtection/>}>
+					<Route path='/UserPage/Main' element={<UserPage />} />
+					<Route path='/UserPage/createAPost' element={<CreatePost />} />
+				</Route>
 			</Routes>
 		</div>
 	)

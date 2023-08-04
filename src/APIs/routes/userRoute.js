@@ -8,7 +8,7 @@ userRouter.post('/', async (req, res) => {
     if(error) {
         return res.status(400).json({error: error.details[0].message});
     }
-    const { userName, password } = req.body;
+    const { name, userName, password } = req.body;
 
     try {
         const isExist = await User.findOne({ userName: userName });
@@ -17,6 +17,7 @@ userRouter.post('/', async (req, res) => {
         }
     
         const user = new User({
+            name,
             userName, 
             password
         });
@@ -28,10 +29,13 @@ userRouter.post('/', async (req, res) => {
     catch(ex) {
         res.status(500).send(ex);
     }
-})
+});
+
+
 
 function validateUser(req) {
     const schema = Joi.object({
+        name: Joi.string().required().min(1).max(25),
         userName: Joi.string().min(5).max(16).required(),
         password: Joi.string().min(5).max(16).required()
     });
