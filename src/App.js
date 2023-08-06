@@ -7,18 +7,13 @@ import { CreatePost } from './postComponent/CreatePost';
 import { LoginPage } from './HomePage/LoginPage';
 import { RoutesProtection } from './HomePage/RoutesProtection';
 
-
 function App() {
   return (
 		<div className='App'>
 			<Routes>
-				<Route path='/HomePage' element={<HomePage />} />
-				<Route path='/HomePage/LoginPage' element={<LoginPage/>}/>
-				<Route path='/HomePage/CreateUserPage' element={<CreateUserPage />} />
-				<Route element={<RoutesProtection/>}>
-					<Route path='/UserPage/Main' element={<UserPage />} />
-					<Route path='/UserPage/createAPost' element={<CreatePost />} />
-				</Route>
+				<Route path='/' element={<HomePage />} />
+				<Route path='/LoginPage' element={<LoginPage/>}/>
+				<Route path='/CreateUserPage' element={<CreateUserPage />} />
 			</Routes>
 		</div>
 	)

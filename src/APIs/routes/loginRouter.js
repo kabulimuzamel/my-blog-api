@@ -19,7 +19,7 @@ loginRouter.post('/', async (req, res) => {
 
     const token = user.generateAuthToken();
     res.header('x-auth-token', token);
-    res.status(200).send(token);
+    res.status(200).json({userId: user._id});
 });
 
 function validateUserLogin(req) {

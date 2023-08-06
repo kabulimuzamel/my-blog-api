@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
-import { Header } from "../bodyComponent/Header";
+import { Button, Container, Form, Alert, CloseButton } from "react-bootstrap";
 
-export function CreatePost() {
+export function CreatePost({ userId }) {
     const [author, setAuthor] = useState('');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [tags, setTags] = useState('');
+    const [alertMessage, setAlertMessage] = useState(null);
+    const [alertMessageVariant, setAlertMessageVariant] = useState('');
     
     const submitPost = (e) => {
-        if(author === '' && title === '' && content === '') {
-            alert('Please enter something')
+        e.preventDefault();
+        if(author == '' || title == '' || content == '') {
+            setAlertMessageVariant('danger')
+            setAlertMessage('Please fill out the author, title, and content of the post you want to share');
         } else {
 
             e.preventDefault()
@@ -20,11 +23,15 @@ export function CreatePost() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ author, title, content, tags })
+                body: JSON.stringify({ author, title, content, tags, userId })
             })
                 .then(res => {
-                    console.log(res)
-                    window.location.reload();
+                    setAuthor('');
+                    setTitle('');
+                    setContent('');
+                    setAlertMessageVariant('success')
+                    setAlertMessage('Post Created Successfully');
+                    
                 })
                 .catch(err => console.log(err));
         }
@@ -34,8 +41,21 @@ export function CreatePost() {
 
     return (
         <>
-            <Header/>
-            <Container style={{ width: '1000px' }}>
+            <Container className="mb-5" style={{ width: '1000px' }}>
+                <div className="d-flex justify-content-center">
+                    <Alert
+                        className={alertMessage ? '' : 'd-none'}
+                        style={{ width: '600px' }}
+                        variant={alertMessageVariant}>
+                        <CloseButton
+                            onClick={() => setAlertMessage(null)}
+                            className='position-absolute end-0 me-2'
+                        />
+                        {alertMessage}
+                    </Alert>
+                </div>
+                <h2 className="text-light">Wanna Share Something...</h2>
+                <br/>
                 <Form className='position-relative'>
                     <Form.Group>
                         <Form.Label className="text-light">Author</Form.Label>

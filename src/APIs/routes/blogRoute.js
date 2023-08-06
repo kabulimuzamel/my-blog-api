@@ -9,18 +9,19 @@ const authToken = require('../middleware/authToken')
 
 // C - Create
 
-blogRouter.post('/', authToken, async (req, res) => {
+blogRouter.post('/', async (req, res) => {
     const { error } = validatePost(req.body, res);
     if(error) {
         res.status(400).json({ error: error.details[0].message })
     }
-    const { author, title, tags, content, comments } = req.body;
+    const { author, title, tags, content, comments, userId } = req.body;
     const post = new Post({
         author, 
         title,
         tags,
         content, 
-        comments
+        comments,
+        userId
     });
     await post.save();
 });
@@ -54,20 +55,20 @@ async function authenticateUser(req, res, next) {
 //     res.send(posts);
 // });
 
-blogRouter.get('/:title', async (req, res) => {
+blogRouter.get('/:userId', async (req, res) => {
     const post = await Post.find({
-        title: req.params.title,
-    }).select('-__v -_id')
+        userId: req.params.userId,
+    }).select('-__v')
     if(!post.length) {
         return res.status(404).send(`Not found`);
-     }
+    }
      
-     res.send(post);
-    })
+    res.send(post);
+})
 
 // U - Update
     
-blogRouter.put('/:id', authToken, async (req, res) => {
+blogRouter.put('/:id', async (req, res) => {
     const reqKeys = ['author', 'title', 'content', 'tags', 'comments']
 	const validKey = []
 	const inValidKey = []
@@ -110,7 +111,7 @@ blogRouter.put('/:id', authToken, async (req, res) => {
 
 // D - Delete
 
-blogRouter.delete('/:id', authToken, async  (req, res) => {
+blogRouter.delete('/:id', async  (req, res) => {
     try {
         const post = await Post.findByIdAndRemove(req.params.id);
        
@@ -132,6 +133,7 @@ function validatePost(req, res) {
         tags: Joi.string(),
         content: Joi.required(),
         comments: Joi.string(),
+        userId: Joi.string()
     });
 
     const result = schema.validate(req);
