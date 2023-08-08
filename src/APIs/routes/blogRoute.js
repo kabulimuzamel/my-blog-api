@@ -39,7 +39,7 @@ blogRouter.post('/:token', async (req, res) => {
 
 // R - Read
 blogRouter.get('/', async (req, res) => {
-    const posts = await Post.find().select('-__v').populate('author', 'name -_id');
+    const posts = await Post.find().select('-__v').populate('author', 'name -_id userName');
     res.send(posts);
 });
 
@@ -50,7 +50,7 @@ blogRouter.get('/:token', async (req, res) => {
         const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
         const post = await Post.find({
             author: decodedPayLoad._id,
-        }).select('-__v').populate('author', 'name')
+        }).select('-__v').populate('author', 'name userName')
         res.status(200).send(post);
     } catch (ex) {
         return res.status(400).json('Unauthorized')

@@ -13,6 +13,10 @@ const postSchema = new mongoose.Schema({
 	tags: {
 		type: [String],
 	},
+	publishedDate: {
+		type: Date,
+		default: Date.now
+	},
 	content: {
 		type: String,
 		required: true,

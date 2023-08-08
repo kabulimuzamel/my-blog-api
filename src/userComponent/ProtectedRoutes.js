@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { LoginPage } from "../HomePage/LoginPage";
 
 export function ProtectedRoutes() {
     const [token, setToken] = useState(undefined);

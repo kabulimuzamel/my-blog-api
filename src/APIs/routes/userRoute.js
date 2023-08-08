@@ -27,8 +27,10 @@ userRouter.post('/', async (req, res) => {
             userName, 
             password
         });
-        await user.save();
-        return res.status(200).send('Created Successfully');
+        const userResult = await user.save();
+        const token = userResult.generateAuthToken();
+        res.status(200).json({ token: token })
+        // return res.status(200).send('Created Successfully');
     }
     catch(ex) {
         res.status(500).send(ex);

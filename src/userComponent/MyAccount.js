@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Alert, CloseButton, Form, FormGroup, Button, Modal } from "react-bootstrap";
+import { Container, Alert, CloseButton, Form, FormGroup, Button, Modal, Image } from "react-bootstrap";
 import { UserHeader } from "../bodyComponent/UserHeader";
 import { Navigate } from "react-router-dom";
 
@@ -12,6 +12,27 @@ export function MyAccount() {
     const [alertMessageVariant, setAlertMessageVariant] = useState(null);
     const [isDeleted, setIsDeleted] = useState(false);
     const [show, setShow] = useState(false);
+    const [toShowPassword, setToShowPassword] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+
+    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=13758&format=png';
+    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=14744&format=png';
+
+    const passwordIcon = {
+        height: '2rem',
+        width: '2rem',
+        position: 'absolute',
+        top: '34px',
+        right: '10px',
+        transition: 'transform 0.4s',
+        transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+        cursor: isHovered ? 'pointer' : 'auto'
+    }
+
+    const showPassIconHandler = (e) => {
+        e.preventDefault();
+        toShowPassword ? setToShowPassword(false) : setToShowPassword(true);
+    }
 
     useEffect(() => {
         if(!token) {
@@ -131,13 +152,21 @@ export function MyAccount() {
                             onChange={(e) => setUserName(e.target.value)}
                         />
                     </FormGroup>
-                    <FormGroup>
+                    <FormGroup  className="position-relative">
                         <Form.Label className='text-light'>Password</Form.Label>
                         <Form.Control
                             className='text-bg-dark'
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            type={toShowPassword ? "text" : "password"}
                         />
+                        <Image 
+                            src={toShowPassword ? toHideIconUrl : toShowIconUrl } 
+                            style={passwordIcon}
+                            onMouseEnter={() => setIsHovered(true)}
+                            onMouseLeave={() => setIsHovered(false)}
+                            onClick={showPassIconHandler}
+                        />                        
                     </FormGroup>
                     <div className="d-flex flex-column justify-content-center align-items-center">
                         <Button className='mt-3 btn-light btn-sm'

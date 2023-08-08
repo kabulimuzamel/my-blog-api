@@ -1,11 +1,34 @@
 import React, { useState } from "react";
-import { Button, Container, Form, FormGroup, Alert, CloseButton } from "react-bootstrap";
+import { Button, Container, Form, FormGroup, Alert, CloseButton, Image } from "react-bootstrap";
+import { Navigate } from "react-router-dom";
 
 export function CreateUser() {
     const [name, setName] = useState('');
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
+    const [isAccountCreated, setIsAccountCreated] = useState(false);
     const [alertMessage, setAlertMessage] = useState(null);
+    const [toShowPassword, setToShowPassword] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+
+    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=13758&format=png';
+    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=14744&format=png';
+
+    const passwordIcon = {
+        height: '2rem',
+        width: '2rem',
+        position: 'absolute',
+        top: '34px',
+        right: '10px',
+        transition: 'transform 0.4s',
+        transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+        cursor: isHovered ? 'pointer' : 'auto'
+    }
+
+    const showPassIconHandler = (e) => {
+        e.preventDefault()
+        toShowPassword ? setToShowPassword(false) : setToShowPassword(true)
+    }
 
     const submitForm = (e) => {
         e.preventDefault();
@@ -19,7 +42,10 @@ export function CreateUser() {
         }) 
             .then(res => {
                 if(res.status === 200) {
-                    window.location.reload();
+                    res.json().then(data => {
+                        localStorage.setItem('token', data.token);
+                        setIsAccountCreated(true);
+                    })
                 } else {
                     res.json().then((data) => {
                         setAlertMessage(data.error); 
@@ -27,7 +53,10 @@ export function CreateUser() {
                 }
             })
             .catch(err => console.log(err.message));
+    }
 
+    if(isAccountCreated) {
+        return <Navigate to='/UserPage' />
     }
 
     return (
@@ -46,9 +75,22 @@ export function CreateUser() {
                     <Form.Label className="text-light">User Name</Form.Label>
                     <Form.Control className="text-bg-dark" value={userName} onChange={(e) => setUserName(e.target.value)}/>
                 </FormGroup>
-                <FormGroup>
+                <FormGroup className="position-relative">
                     <Form.Label className="text-light">Password</Form.Label>
-                    <Form.Control className="text-bg-dark" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                    <Form.Control 
+                        className="text-bg-dark" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)}
+                        type={toShowPassword ? "text" : "password"}
+
+                    />
+                    <Image 
+                        src={toShowPassword ? toHideIconUrl : toShowIconUrl } 
+                        style={passwordIcon}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                        onClick={showPassIconHandler}
+                    />  
                 </FormGroup>
                 <Button className="position-absolute end-0 mt-3 btn-light" onClick={submitForm}>Register</Button>
             </Form>
