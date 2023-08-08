@@ -5,14 +5,15 @@ import { UpdatePost } from "./UpdatePost";
 export function Post({ token }) {
     const [postArr, setPostArr] = useState([]);
 	useEffect(() => {
-		if (token) {
+		if(token) {
 			fetch(`http://localhost:3000/api/blog/${token}`)
 				.then((res) => res.json())
 				.then((res) => {
 					setPostArr(res)
 				})
 		}
-	}, [token])
+	}, [token]);
+	
     return (
 			<Container style={{ width: '1000px' }}>
 				<h2 className='text-light'>Wanna edit your posts...</h2>

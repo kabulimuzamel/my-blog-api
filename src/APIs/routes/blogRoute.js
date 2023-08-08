@@ -22,8 +22,6 @@ blogRouter.post('/:token', async (req, res) => {
             return res.status(400).json({ error: error.details[0].message })
         }
         const userId = user._id;
-        // console.log(userId)
-        const author = user.name;
         const { title, tags, content } = req.body;
         const post = new Post({
             author: userId, 
@@ -40,16 +38,9 @@ blogRouter.post('/:token', async (req, res) => {
 
 
 // R - Read
-blogRouter.get('/:token', async (req, res) => {
-    const token = req.params.token;
-    try {
-        jwt.verify(token, config.get('jwtPrivateKey'));
-        const posts = await Post.find().select('-__v -_id').populate('author', 'name -_id');
-        res.send(posts);
-    }
-    catch (ex) {
-        res.status(403).send('Unauthorized');
-    }
+blogRouter.get('/', async (req, res) => {
+    const posts = await Post.find().select('-__v').populate('author', 'name -_id');
+    res.send(posts);
 });
 
 blogRouter.get('/:token', async (req, res) => {

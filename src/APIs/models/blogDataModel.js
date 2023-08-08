@@ -21,9 +21,6 @@ const postSchema = new mongoose.Schema({
 		type: [String],
 	},
 	imgURL: String,
-	userId: {
-		type: String,
-	}
 })
 
 const Post = mongoose.model('Post', postSchema);

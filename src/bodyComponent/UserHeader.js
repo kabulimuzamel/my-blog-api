@@ -15,15 +15,20 @@ export function UserHeader() {
 						<Nav.Link className='text-bg-dark' href='/UserPage'>
 							My Blog
 						</Nav.Link>
+					</Nav>
+					<Navbar.Collapse className='justify-content-end'>
 						<Nav.Link
 							className='text-bg-dark'
 							onClick={() => localStorage.clear()}
 							href='/LoginPage'>
 							Log Out
 						</Nav.Link>
-					</Nav>
-					<Navbar.Collapse className='justify-content-end'>
-						Hello
+						<Nav.Link
+							className="text-bg-dark ms-4"
+							href="/AccountPage"
+						>
+							My Account
+						</Nav.Link>
 					</Navbar.Collapse>
 				</Container>
 			</Navbar>

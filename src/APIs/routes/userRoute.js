@@ -13,12 +13,13 @@ userRouter.post('/', async (req, res) => {
     if(error) {
         return res.status(400).json({error: error.details[0].message});
     }
+
     const { name, userName, password } = req.body;
 
     try {
-        const isExist = await User.findOne({ userName: userName });
-        if(isExist) {
-            return res.status(400).json({error: 'User already exist'});
+        const isExist = await User.find({ userName: userName });
+        if(isExist.length) {
+            return res.status(400).json({error: 'User already exists'});
         }
     
         const user = new User({
@@ -26,13 +27,13 @@ userRouter.post('/', async (req, res) => {
             userName, 
             password
         });
-    
         await user.save();
-        return res.send('Created Successfully').status(200)
+        return res.status(200).send('Created Successfully');
     }
     catch(ex) {
         res.status(500).send(ex);
     }
+
 });
 
 // Read

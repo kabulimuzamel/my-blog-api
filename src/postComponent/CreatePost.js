@@ -29,11 +29,13 @@ export function CreatePost({ token }) {
                         setAlertMessage('Please Login to your account');  
                         return;
                     } else if(res.status === 200) {
-                        setTitle('');
-                        setContent('');
                         setAlertMessageVariant('success')
                         setAlertMessage('Post Created Successfully');
-                        window.location.reload();
+                        setTimeout(() => {
+                            setTitle('');
+                            setContent('');
+                            window.location.reload();
+                        }, 1000)
                     }
                     
                     
