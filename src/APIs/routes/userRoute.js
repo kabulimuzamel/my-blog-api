@@ -62,7 +62,7 @@ userRouter.put('/:token', async(req, res) => {
         
         const { error } = validateUser(req);
         if(error) {
-            return res.status(400).json(error.details[0].message);
+            return res.status(400).json({error: error.details[0].message});
         }
 
         const { name, userName, password } = req.body
@@ -91,7 +91,7 @@ userRouter.delete('/:token', async (req, res) => {
         const posts = await Post.find({
             author: userId
         }).select('_id');
-        if(posts.length !== 0) {
+        if(posts.length) {
             posts.forEach(async (postObj) => {
                 await Post.findByIdAndDelete(postObj._id)
             })

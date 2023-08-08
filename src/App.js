@@ -5,6 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import { HomePage } from './HomePage/HomePage';
 import { LoginPage } from './HomePage/LoginPage';
 import { AllPost } from './postComponent/AllPost';
+import { MyAccount } from './userComponent/MyAccount';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
 				<Route path='/CreateUserPage' element={<CreateUserPage />} />
 				<Route path='/UserPage' element={<UserPage/>} />
 				<Route path='/AllPosts' element={<AllPost/>}/>
+				<Route path='/MyAccount' element={<MyAccount/>} />
 			</Routes>
 		</div>
 	)

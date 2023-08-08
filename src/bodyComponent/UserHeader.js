@@ -25,7 +25,7 @@ export function UserHeader() {
 						</Nav.Link>
 						<Nav.Link
 							className="text-bg-dark ms-4"
-							href="/AccountPage"
+							href="/MyAccount"
 						>
 							My Account
 						</Nav.Link>

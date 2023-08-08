@@ -52,7 +52,7 @@ export const UpdatePost = ({ token, postObj }) => {
 		fetch(`http://localhost:3000/api/blog/${token}/${id}`, {
 			method: 'PUT',
 			headers: {
-				Accept: 'application/json',
+				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ title, content }),
