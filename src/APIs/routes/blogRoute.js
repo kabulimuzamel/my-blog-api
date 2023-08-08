@@ -3,85 +3,90 @@ const express = require('express');
 const blogRouter = express.Router();
 const User = require('../models/userDataModel')
 const Post = require('../models/blogDataModel');
-const authToken = require('../middleware/authToken')
+const jwt = require('jsonwebtoken');
+const config = require('config');
 
 // CRUD
 
 // C - Create
 
-blogRouter.post('/', async (req, res) => {
-    const { error } = validatePost(req.body, res);
-    if(error) {
-        res.status(400).json({ error: error.details[0].message })
+blogRouter.post('/:token', async (req, res) => {
+    const token = req.params.token;
+    try {
+        const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+        const user = await User.findOne({
+            _id: decodedPayLoad._id,
+        }).select('-__v -password');
+        const { error } = validatePost(req.body)
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message })
+        }
+        const userId = user._id;
+        // console.log(userId)
+        const author = user.name;
+        const { title, tags, content } = req.body;
+        const post = new Post({
+            author: userId, 
+            title,
+            content, 
+        });
+        const result = await post.save();
+        res.status(200).send(result);
+        
+    } catch (ex) {
+        return res.status(400).json('Unauthorized')
     }
-    const { author, title, tags, content, comments, userId } = req.body;
-    const post = new Post({
-        author, 
-        title,
-        tags,
-        content, 
-        comments,
-        userId
-    });
-    await post.save();
 });
 
 
 // R - Read
-blogRouter.get('/', async (req, res) => {
-    const posts = await Post.find().select('-__v');
-    res.send(posts);
+blogRouter.get('/:token', async (req, res) => {
+    const token = req.params.token;
+    try {
+        jwt.verify(token, config.get('jwtPrivateKey'));
+        const posts = await Post.find().select('-__v -_id').populate('author', 'name -_id');
+        res.send(posts);
+    }
+    catch (ex) {
+        res.status(403).send('Unauthorized');
+    }
 });
 
-async function authenticateUser(req, res, next) {
-    const { userName, password } = req.body;
-    const user = await User.find({
-        $and: [
-            { userName: userName },
-            { password: password }
-        ]
-    });
-
-    if(!user) {
-        res.status(401).json({ error: 'The entered username or password is wrong' })
+blogRouter.get('/:token', async (req, res) => {
+    const token = req.params.token;
+    
+    try {
+        const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+        const post = await Post.find({
+            author: decodedPayLoad._id,
+        }).select('-__v').populate('author', 'name')
+        res.send(post);
+    } catch (ex) {
+        return res.status(400).json('Unauthorized')
     }
-
-    next();
-}
-
-
-// blogRouter.get('/:userName', authenticateUser, async (req, res) => {
-//     const posts = await Post.find({ userName: req.params.userName }).select('-__v');
-//     res.send(posts);
-// });
-
-blogRouter.get('/:userId', async (req, res) => {
-    const post = await Post.find({
-        userId: req.params.userId,
-    }).select('-__v')
-    if(!post.length) {
-        return res.status(404).send(`Not found`);
-    }
-     
-    res.send(post);
 })
 
 // U - Update
     
-blogRouter.put('/:id', async (req, res) => {
-    const reqKeys = ['author', 'title', 'content', 'tags', 'comments']
+blogRouter.put('/:token/:postId', async (req, res) => {
+    const token = req.params.token;
+    const reqKeys = ['title', 'content', 'tags']
 	const validKey = []
 	const inValidKey = []
 
 	try {
-		const post = await Post.findById(req.params.id)
-		if (!post) {
-			return res.status(404).send('Post Not Found')
-		}
+        const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+        const user = await User.findOne({
+            _id: decodedPayLoad._id,
+        }).select('-__v -_id -password');
+        if(Object.keys(user).length === 0) {
+            return res.status(403).json('Access denied');
+        }
+		const post = await Post.findById(req.params.postId)
 
 		const body = req.body
 		if (Object.keys(body).length === 0) {
-			return res.status(400).send("You didn't enter anything")
+			return res.status(400).json("You didn't enter anything")
 		}
 
 		Object.keys(body).forEach((key) => {
@@ -97,13 +102,12 @@ blogRouter.put('/:id', async (req, res) => {
 			const invalidKeysMessage = `Following keys are invalid: ${inValidKey.join(
 				', '
 			)}`
-			return res.status(400).send(invalidKeysMessage)
+			return res.status(400).json(invalidKeysMessage)
 		}
 
-		const result = await post.save()
-		return res.status(200).send(result)
+		await post.save()
+		return res.status(200).send('Updated successfully')
 	} catch (err) {
-		console.error(err)
 		return res.status(500).send('Server Error')
 	}
 });
@@ -111,29 +115,33 @@ blogRouter.put('/:id', async (req, res) => {
 
 // D - Delete
 
-blogRouter.delete('/:id', async  (req, res) => {
+blogRouter.delete('/:token/:postId', async  (req, res) => {
+    const token = req.params.token;
     try {
-        const post = await Post.findByIdAndRemove(req.params.id);
-       
+        const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+        const user = await User.findOne({
+            _id: decodedPayLoad._id,
+        }).select('-__v -_id -password');
+        if(Object.keys(user).length === 0) {
+            return res.status(403).send('Access denied');
+        }
+        const post = await Post.findByIdAndRemove(req.params.postId);
         if(!post) {
             return res.status(404).send('Post not found')
         }
         return res.send('Post deleted')
     }
     catch(ex) {
-        return res.status(500).send('ServerError')
+        return res.status(403).send('Unauthorized')
     }
 })
 
 
-function validatePost(req, res) {
+function validatePost(req) {
     const schema = Joi.object({
-        author: Joi.required(),
         title: Joi.required(),
         tags: Joi.string(),
         content: Joi.required(),
-        comments: Joi.string(),
-        userId: Joi.string()
     });
 
     const result = schema.validate(req);

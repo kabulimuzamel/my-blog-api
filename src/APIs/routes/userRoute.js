@@ -2,6 +2,11 @@ const Joi = require('joi');
 const express = require('express');
 const userRouter = express.Router();
 const User = require('../models/userDataModel');
+const Post = require('../models/blogDataModel');
+const jwt = require('jsonwebtoken');
+const config = require('config');
+
+// Create
 
 userRouter.post('/', async (req, res) => {
     const { error } = validateUser(req);
@@ -22,7 +27,6 @@ userRouter.post('/', async (req, res) => {
             password
         });
     
-    
         await user.save();
         return res.send('Created Successfully').status(200)
     }
@@ -31,7 +35,74 @@ userRouter.post('/', async (req, res) => {
     }
 });
 
+// Read
 
+userRouter.get('/:token', async(req, res) => {
+    const token = req.params.token;
+    const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+    const user = await User.findOne({
+        _id: decodedPayLoad._id,
+    }).select('-__v -_id');
+    
+    if(Object.keys(user).length === 0) {
+        return res.status(403).send('Unauthorized')
+    }
+
+    return res.status(200).send(user);
+});
+
+// Update
+
+userRouter.put('/:token', async(req, res) => {
+    const token = req.params.token;
+    try {
+        const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+        const userId = decodedPayLoad._id;
+        
+        const { error } = validateUser(req);
+        if(error) {
+            return res.status(400).json(error.details[0].message);
+        }
+
+        const { name, userName, password } = req.body
+        await User.findByIdAndUpdate(userId, {
+            $set: {
+                name,
+                userName, 
+                password
+            }
+        })
+        res.status(200).send('Updated successfully');
+
+    }
+    catch(ex) {
+        res.status(403).send('Unauthorized');
+    }
+});
+
+// Delete
+
+userRouter.delete('/:token', async (req, res) => {
+    const token = req.params.token;
+    try {
+        const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+        const userId = decodedPayLoad._id;
+        const posts = await Post.find({
+            author: userId
+        }).select('_id');
+        if(posts.length !== 0) {
+            posts.forEach(async (postObj) => {
+                await Post.findByIdAndDelete(postObj._id)
+            })
+        } 
+        await User.findByIdAndRemove(userId);
+
+        res.status(200).send('Deleted successfully');
+    }
+    catch (ex) {
+        res.status(403).send('Unauthorized');
+    }
+})
 
 function validateUser(req) {
     const schema = Joi.object({

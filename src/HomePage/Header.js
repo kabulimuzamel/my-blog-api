@@ -5,7 +5,7 @@ export function Header() {
 	return (
 		<Navbar bg='dark' data-bs-theme='dark'>
 			<Container>
-				<Navbar.Brand href='#home'>My Page</Navbar.Brand>
+				<Navbar.Brand href='#home'>Home</Navbar.Brand>
 				<Nav className='me-auto'>
 					<Nav.Link href='/CreateUserPage'>Register as a User</Nav.Link>
 					<Nav.Link href='/LoginPage'>Login</Nav.Link>

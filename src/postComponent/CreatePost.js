@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button, Container, Form, Alert, CloseButton } from "react-bootstrap";
 
-export function CreatePost({ userId }) {
-    const [author, setAuthor] = useState('');
+export function CreatePost({ token }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [tags, setTags] = useState('');
@@ -11,33 +10,38 @@ export function CreatePost({ userId }) {
     
     const submitPost = (e) => {
         e.preventDefault();
-        if(author == '' || title == '' || content == '') {
+        if(title == '' || content == '') {
             setAlertMessageVariant('danger')
             setAlertMessage('Please fill out the author, title, and content of the post you want to share');
         } else {
-
             e.preventDefault()
-            fetch(`http://localhost:3000/api/blog`, {
+            fetch(`http://localhost:3000/api/blog/${token}`, {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ author, title, content, tags, userId })
+                body: JSON.stringify({ title, content })
             })
                 .then(res => {
-                    setAuthor('');
-                    setTitle('');
-                    setContent('');
-                    setAlertMessageVariant('success')
-                    setAlertMessage('Post Created Successfully');
+                    if(res.status === 400) {
+                        setAlertMessageVariant('danger')
+                        setAlertMessage('Please Login to your account');  
+                        return;
+                    } else if(res.status === 200) {
+                        setTitle('');
+                        setContent('');
+                        setAlertMessageVariant('success')
+                        setAlertMessage('Post Created Successfully');
+                        window.location.reload();
+                    }
+                    
                     
                 })
                 .catch(err => console.log(err));
         }
 
     } 
-    
 
     return (
         <>
@@ -57,14 +61,6 @@ export function CreatePost({ userId }) {
                 <h2 className="text-light">Wanna Share Something...</h2>
                 <br/>
                 <Form className='position-relative'>
-                    <Form.Group>
-                        <Form.Label className="text-light">Author</Form.Label>
-                        <Form.Control
-                            className="text-bg-dark"
-                            value={author}
-                            onChange={(e) => setAuthor(e.target.value)}
-                        />
-                    </Form.Group>
                     <Form.Group>
                         <Form.Label className="text-light">Title</Form.Label>
                         <Form.Control

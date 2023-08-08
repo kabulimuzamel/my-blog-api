@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Modal, Form, CloseButton, Alert } from 'react-bootstrap'
 
-export const UpdatePost = ({postObj}) => {
+export const UpdatePost = ({ token, postObj }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [author, setAuthor] = useState('')
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('');
 	const [id, setId] = useState('');
@@ -11,9 +10,7 @@ export const UpdatePost = ({postObj}) => {
 
 	const handleButtonClick = (e) => {
 		e.preventDefault();
-		console.log(postObj)
 		setIsModalVisible(true);
-		setAuthor(postObj.author);
 		setTitle(postObj.title);
 		setContent(postObj.content);
 		setId(postObj._id);
@@ -22,19 +19,24 @@ export const UpdatePost = ({postObj}) => {
 	const closeModal = () => {
 		setIsModalVisible(false);
 		setAlertMessage(null);
+		window.location.reload();
 	}
 
 	const deleteAPost = (e) => {
 		e.preventDefault();
-		fetch(`http://localhost:3000/api/blog/${id}`, {
+		fetch(`http://localhost:3000/api/blog/${token}/${id}`, {
 			method: 'DELETE',
 		})
 			.then(res => {
-				setAlertMessage('Deleted Successfully');
-				setTimeout(() => {
-					setAlertMessage(null);
-					setIsModalVisible(false);
-				}, 2000)
+				if(res.status === 200) {
+					setAlertMessage('Deleted Successfully');
+					setTimeout(() => {
+						setAlertMessage(null);
+						window.location.reload();
+					}, 2000)
+				} else {
+					setAlertMessage('Please Login to your account');
+				}
 			})
 			.catch((err) => console.log(err));
 	}
@@ -43,16 +45,21 @@ export const UpdatePost = ({postObj}) => {
 
 	const updatePost = (e) => {
 		e.preventDefault();
-		fetch(`http://localhost:3000/api/blog/${id}`, {
+		if(title === '' || content === '') {
+			setAlertMessage('You can not leave title and content empty');
+			return;
+		}
+		fetch(`http://localhost:3000/api/blog/${token}/${id}`, {
 			method: 'PUT',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ author, title, content }),
+			body: JSON.stringify({ title, content }),
 		})
-			.then((res) => res.json())
-			.then((res) => setAlertMessage('Updated Successfully'))
+			.then((res) => {
+				setAlertMessage('Updated Successfully')
+			})
 			.catch((err) => console.log(err))
 			
 	}
@@ -77,13 +84,6 @@ export const UpdatePost = ({postObj}) => {
 					</Modal.Header>
 					<Modal.Body>
 						<Form>
-							<Form.Group>
-								<Form.Label>Author</Form.Label>
-								<Form.Control
-									value={author}
-									onChange={(e) => setAuthor(e.target.value)}
-								/>
-							</Form.Group>
 							<Form.Group>
 								<Form.Label>Title</Form.Label>
 								<Form.Control
