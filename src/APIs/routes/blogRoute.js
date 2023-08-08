@@ -51,7 +51,7 @@ blogRouter.get('/:token', async (req, res) => {
         const post = await Post.find({
             author: decodedPayLoad._id,
         }).select('-__v').populate('author', 'name')
-        res.send(post);
+        res.status(200).send(post);
     } catch (ex) {
         return res.status(400).json('Unauthorized')
     }

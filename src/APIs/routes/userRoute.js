@@ -40,16 +40,20 @@ userRouter.post('/', async (req, res) => {
 
 userRouter.get('/:token', async(req, res) => {
     const token = req.params.token;
-    const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
-    const user = await User.findOne({
-        _id: decodedPayLoad._id,
-    }).select('-__v -_id');
+    try {
+        const decodedPayLoad = jwt.verify(token, config.get('jwtPrivateKey'));
+        const user = await User.findOne({
+            _id: decodedPayLoad._id,
+        }).select('-__v -_id');
+        if(Object.keys(user).length === 0) {
+            return res.status(403).send('Unauthorized')
+        }
     
-    if(Object.keys(user).length === 0) {
-        return res.status(403).send('Unauthorized')
+        return res.status(200).send(user);
     }
-
-    return res.status(200).send(user);
+    catch(ex) {
+        res.status(400).send('Bad Request')
+    }
 });
 
 // Update

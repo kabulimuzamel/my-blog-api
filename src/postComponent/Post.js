@@ -4,15 +4,18 @@ import { UpdatePost } from "./UpdatePost";
 
 export function Post({ token }) {
     const [postArr, setPostArr] = useState([]);
+
 	useEffect(() => {
 		if(token) {
 			fetch(`http://localhost:3000/api/blog/${token}`)
-				.then((res) => res.json())
 				.then((res) => {
-					setPostArr(res)
+					if(res.status === 200) {
+						res.json().then((res) => setPostArr(res))
+					}
 				})
 		}
 	}, [token]);
+
 	
     return (
 			<Container style={{ width: '1000px' }}>

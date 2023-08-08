@@ -19,8 +19,7 @@ export function LoginPage() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ userName, password })
-        }).then(res => {
-            
+        }).then(res => {   
             if(res.status === 200) {
                 setIsLoggedIn(true);
                 res.json().then((res) => {
@@ -37,7 +36,7 @@ export function LoginPage() {
         return (
             <>
                 <Header />
-                <Container className='mt-2 d-flex flex-column justify-content-center align-items-center'>
+                <Container className='mt-5 d-flex flex-column justify-content-center align-items-center'>
                     <Alert
                         className={alertMessage ? '' : 'd-none'}
                         style={{ width: '600px' }}
@@ -51,7 +50,7 @@ export function LoginPage() {
                     <h1 className='text-light my-3'>
                         Login if you already have an account
                     </h1>
-                    <Form className='position-relative' style={{ width: '300px' }}>
+                    <Form className='position-relative mt-5' style={{ width: '300px' }}>
                         <FormGroup>
                             <Form.Label className='text-light'>User Name</Form.Label>
                             <Form.Control
