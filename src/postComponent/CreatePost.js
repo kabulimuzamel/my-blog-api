@@ -4,7 +4,6 @@ import { Button, Container, Form, Alert, CloseButton } from "react-bootstrap";
 export function CreatePost({ token }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [tags, setTags] = useState('');
     const [alertMessage, setAlertMessage] = useState(null);
     const [alertMessageVariant, setAlertMessageVariant] = useState('');
     

@@ -2,7 +2,7 @@ import { Navbar, Container, Nav } from "react-bootstrap";
 
 export function UserHeader() {
     return (
-		<header className='pb-5'>
+		<header className="mb-5">
 			<Navbar
 				className='navBar border-bottom'
 				bg='dark'

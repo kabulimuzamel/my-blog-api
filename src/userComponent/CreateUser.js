@@ -11,8 +11,8 @@ export function CreateUser() {
     const [toShowPassword, setToShowPassword] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
-    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=13758&format=png';
-    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=14744&format=png';
+    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=38869&format=png'
+    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=r9g0CfaDv5fz&format=png';
 
     const passwordIcon = {
         height: '2rem',

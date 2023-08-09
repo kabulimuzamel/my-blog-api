@@ -10,9 +10,6 @@ const postSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	tags: {
-		type: [String],
-	},
 	publishedDate: {
 		type: Date,
 		default: Date.now
@@ -21,10 +18,6 @@ const postSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	comments: {
-		type: [String],
-	},
-	imgURL: String,
 })
 
 const Post = mongoose.model('Post', postSchema);

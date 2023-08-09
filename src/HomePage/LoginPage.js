@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Container, Alert, Form, FormGroup, CloseButton, Button, Image } from "react-bootstrap";
 import { Header } from "./Header";
 import { Navigate } from "react-router-dom";
-
+import { backgroundUrlStyle } from "../Style/backgroundUrlStyle";
+const imgUrl = require('../Images/img3.avif')
+const BodyBackground = backgroundUrlStyle(imgUrl)
 
 export function LoginPage() {
     const [userName, setUserName] = useState('');
@@ -12,8 +14,8 @@ export function LoginPage() {
     const [toShowPassword, setToShowPassword] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
-    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=13758&format=png';
-    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=14744&format=png';
+    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=38869&format=png'
+    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=r9g0CfaDv5fz&format=png';
 
     const passwordIcon = {
         height: '2rem',
@@ -59,6 +61,7 @@ export function LoginPage() {
         return (
             <>
                 <Header />
+                <BodyBackground />
                 <Container className='mt-5 d-flex flex-column justify-content-center align-items-center'>
                     <Alert
                         className={alertMessage ? '' : 'd-none'}

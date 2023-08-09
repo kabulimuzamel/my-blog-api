@@ -1,10 +1,22 @@
+
 body {
-    background: url('https://e0.pxfuel.com/wallpapers/31/70/desktop-wallpaper-writing-background-black-writers.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
+    background: url(./Images/loading.avif);
+}
+
+.footer {
+    height: 10rem;
+    background-color:rgb(33, 37, 42)
 }
 
 .navBar {
     height: 5rem;
+}
+
+.homePageMain {
+    border: 15px solid rgb(255, 255, 255);
+    height: 50vh;
+    width: 50vw;
+    margin-top: 12rem;
+    margin-left: 40rem;
+    padding: 65px;
 }

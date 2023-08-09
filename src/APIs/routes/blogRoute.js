@@ -22,7 +22,7 @@ blogRouter.post('/:token', async (req, res) => {
             return res.status(400).json({ error: error.details[0].message })
         }
         const userId = user._id;
-        const { title, tags, content } = req.body;
+        const { title, content } = req.body;
         const post = new Post({
             author: userId, 
             title,
@@ -61,7 +61,7 @@ blogRouter.get('/:token', async (req, res) => {
     
 blogRouter.put('/:token/:postId', async (req, res) => {
     const token = req.params.token;
-    const reqKeys = ['title', 'content', 'tags']
+    const reqKeys = ['title', 'content']
 	const validKey = []
 	const inValidKey = []
 
@@ -131,7 +131,6 @@ blogRouter.delete('/:token/:postId', async  (req, res) => {
 function validatePost(req) {
     const schema = Joi.object({
         title: Joi.required(),
-        tags: Joi.string(),
         content: Joi.required(),
     });
 

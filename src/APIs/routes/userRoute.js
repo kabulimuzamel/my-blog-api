@@ -30,7 +30,6 @@ userRouter.post('/', async (req, res) => {
         const userResult = await user.save();
         const token = userResult.generateAuthToken();
         res.status(200).json({ token: token })
-        // return res.status(200).send('Created Successfully');
     }
     catch(ex) {
         res.status(500).send(ex);
@@ -113,9 +112,9 @@ userRouter.delete('/:token', async (req, res) => {
 
 function validateUser(req) {
     const schema = Joi.object({
-        name: Joi.string().required().min(1).max(25),
+        name: Joi.string().required().min(2).max(25),
         userName: Joi.string().min(5).max(16).required(),
-        password: Joi.string().min(5).max(16).required()
+        password: Joi.string().min(8).max(16).required()
     });
 
     const result = schema.validate(req.body);

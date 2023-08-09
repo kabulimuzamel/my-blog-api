@@ -1,6 +1,9 @@
 import React, {useState, useEffect, useTransition} from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
+import { backgroundUrlStyle } from '../Style/backgroundUrlStyle';
+const imgUrl = require('../Images/img.avif');
+const BodyBackground = backgroundUrlStyle(imgUrl)
 
 export function ProtectedRoutes() {
     const [token, setToken] = useState(undefined);
@@ -36,12 +39,18 @@ export function ProtectedRoutes() {
     if(token === undefined) {
         return (
             <div className="position-relative">
+                <BodyBackground />
                 <Spinner style={spinnerStyle} animation="border" variant="light" />
             </div>
         )
     }
     if(!token) {
-        return <Navigate to="/LoginPage" />
+        return (
+            <>
+                <BodyBackground />
+                <Navigate to="/LoginPage" />
+            </>
+        )
     }
     if(token) {
         return <Outlet/>

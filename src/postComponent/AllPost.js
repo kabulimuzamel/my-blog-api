@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Container, Alert, CloseButton } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { UserHeader } from "../bodyComponent/UserHeader";
-
+import { backgroundUrlStyle } from '../Style/backgroundUrlStyle';
+const imgUrl = require('../Images/readingBook.avif')
+const BodyBackground = backgroundUrlStyle(imgUrl)
 export function AllPost() {
 	const [postsArr, setPostsArr] = useState([]);
 
@@ -15,6 +17,7 @@ export function AllPost() {
 	return (
 		<>
 			<UserHeader />
+			<BodyBackground/>
 			<h1 className={postsArr.length ? 'd-none' : 'text-light ms-5'}>Be the FIRST ONE to Publish a Post.................</h1>
 			<Container className={postsArr.length ? '' : 'd-none'} style={{ width: '1000px' }}>
 				{postsArr.map((post, index) => {

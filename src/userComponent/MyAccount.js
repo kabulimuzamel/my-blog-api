@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Container, Alert, CloseButton, Form, FormGroup, Button, Modal, Image } from "react-bootstrap";
 import { UserHeader } from "../bodyComponent/UserHeader";
 import { Navigate } from "react-router-dom";
+import { backgroundUrlStyle } from '../Style/backgroundUrlStyle';
+const imgUrl = require('../Images/creating.avif')
+const BodyBackground = backgroundUrlStyle(imgUrl)
 
 export function MyAccount() {
     const [name, setName] = useState('');
@@ -15,8 +18,8 @@ export function MyAccount() {
     const [toShowPassword, setToShowPassword] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
-    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=13758&format=png';
-    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=14744&format=png';
+    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=38869&format=png'
+    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=r9g0CfaDv5fz&format=png';
 
     const passwordIcon = {
         height: '2rem',
@@ -104,6 +107,7 @@ export function MyAccount() {
 
     return (
         <>
+            <BodyBackground/>
             <Modal show={show}>
                 <Modal.Header>
                     <CloseButton onClick={() => setShow(false)}/>
