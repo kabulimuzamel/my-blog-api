@@ -12,7 +12,7 @@ function App() {
   return (
 		<div className='App'>
 			<Routes>
-				<Route path='/HomePage' element={<HomePage />} />
+				<Route path='/' element={<HomePage />} />
 				<Route path='/LoginPage' element={<LoginPage/>}/>
 				<Route path='/CreateUserPage' element={<CreateUserPage />} />
 				<Route element={<ProtectedRoutes/>}>
