@@ -1,6 +1,15 @@
-# Getting Started with Create React App
+# My Blog App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was developed and built by Muzamel Kabuli. It is a fullstack built project.
+
+To run this project in your machine, you need to:
+  * Have mongodb set up on your device plus mongodb compass.
+  * Install node packages as well by runing
+    ### `npm i`
+  * cd in to APIs directory and run
+      ### `export DEBUG=startup`
+      ### `export myBlog_jwtPrivateKey={typeAKeyForYourJSONWEBTOKEN}`
+      ### `nodemon index.js`
 
 ## Available Scripts
 
@@ -8,11 +17,7 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
 ### `npm test`
 
