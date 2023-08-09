@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Button, Modal, Form, CloseButton, Alert } from 'react-bootstrap'
+import { Button, Modal, Form } from 'react-bootstrap';
+import { handleButtonClick, closeModal, deleteAPostHandler, updatePostHandler } from '../Functions/apiCallFunctions';
 
 export const UpdatePost = ({ token, postObj }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -8,73 +9,28 @@ export const UpdatePost = ({ token, postObj }) => {
 	const [id, setId] = useState('');
 	const [alertMessage, setAlertMessage] = useState(null);
 
-	const handleButtonClick = (e) => {
-		e.preventDefault();
-		setIsModalVisible(true);
-		setTitle(postObj.title);
-		setContent(postObj.content);
-		setId(postObj._id);
-	}
-
-	const closeModal = () => {
-		setIsModalVisible(false);
-		setAlertMessage(null);
-		window.location.reload();
-	}
-
-	const deleteAPost = (e) => {
-		e.preventDefault();
-		fetch(`http://localhost:3000/api/blog/${token}/${id}`, {
-			method: 'DELETE',
-		})
-			.then(res => {
-				if(res.status === 200) {
-					setAlertMessage('Deleted Successfully');
-					setTimeout(() => {
-						setAlertMessage(null);
-						window.location.reload();
-					}, 2000)
-				} else {
-					setAlertMessage('Please Login to your account');
-				}
-			})
-			.catch((err) => console.log(err));
-	}
-
-
-
-	const updatePost = (e) => {
-		e.preventDefault();
-		if(title === '' || content === '') {
-			setAlertMessage('You can not leave title and content empty');
-			return;
-		}
-		fetch(`http://localhost:3000/api/blog/${token}/${id}`, {
-			method: 'PUT',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ title, content }),
-		})
-			.then((res) => {
-				setAlertMessage('Updated Successfully')
-			})
-			.catch((err) => console.log(err))
-			
-	}
-
 	return (
 		<>
 			<div className=' border-bottom position-absolute top-0 end-0'>
 				<Button
 					className='text-white'
 					variant='link'
-					onClick={handleButtonClick}>
+					onClick={(event) => handleButtonClick(
+						event,
+						setIsModalVisible, 
+						setTitle, 
+						setContent, 
+						setId, 
+						postObj
+					)}>
 					Edit
 				</Button>
 
-				<Modal show={isModalVisible} onHide={closeModal} centered>
+				<Modal show={isModalVisible} onHide={() => closeModal(
+					setIsModalVisible, 
+					setAlertMessage
+				)} centered>
+				
 					<Modal.Header closeButton>
 						<Modal.Title
 							className='text-success'
@@ -109,10 +65,22 @@ export const UpdatePost = ({ token, postObj }) => {
 						</Form>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button variant='danger' onClick={deleteAPost}>
+						<Button variant='danger' onClick={(event) => deleteAPostHandler(
+							event, 
+							setAlertMessage, 
+							token, 
+							id
+						)}>
 							Delete
 						</Button>
-						<Button variant='primary' onClick={updatePost}>
+						<Button variant='primary' onClick={(event) => updatePostHandler(
+							event, 
+							title, 
+							content, 
+							setAlertMessage, 
+							token, 
+							id
+						)}>
 							Save changes
 						</Button>
 					</Modal.Footer>

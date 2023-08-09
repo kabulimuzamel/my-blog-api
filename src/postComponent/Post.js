@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {  Container, Alert } from "react-bootstrap";
+import {  Container } from "react-bootstrap";
 import { UpdatePost } from "./UpdatePost";
+import { allPostFetcher } from "../Functions/apiCallFunctions";
 
 export function Post({ token }) {
     const [postArr, setPostArr] = useState([]);
 
 	useEffect(() => {
 		if(token) {
-			fetch(`http://localhost:3000/api/blog/${token}`)
-				.then((res) => {
-					if(res.status === 200) {
-						res.json().then((res) => setPostArr(res))
-					}
-				})
+			allPostFetcher(setPostArr, token);
 		}
 	}, [token]);
 

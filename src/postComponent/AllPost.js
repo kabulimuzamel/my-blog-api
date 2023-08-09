@@ -2,18 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import { UserHeader } from "../bodyComponent/UserHeader";
 import { backgroundUrlStyle } from '../Style/backgroundUrlStyle';
+import { allPostFetcher } from "../Functions/apiCallFunctions";
 const imgUrl = require('../Images/readingBook.avif')
-const BodyBackground = backgroundUrlStyle(imgUrl)
+const BodyBackground = backgroundUrlStyle(imgUrl);
 export function AllPost() {
 	const [postsArr, setPostsArr] = useState([]);
 
 	useEffect(() => {
-		fetch(`http://localhost:3000/api/blog`)
-			.then((res) => res.json())
-			.then((res) => {
-				setPostsArr(res)
-			})
-	}, [])
+		allPostFetcher(setPostsArr);
+	}, []);
+
 	return (
 		<>
 			<UserHeader />

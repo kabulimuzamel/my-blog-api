@@ -1,13 +1,13 @@
-import React, {useState, useEffect, useTransition} from "react";
+import React, {useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import { backgroundUrlStyle } from '../Style/backgroundUrlStyle';
+import { userIdentifier } from "../Functions/apiCallFunctions";
 const imgUrl = require('../Images/img.avif');
 const BodyBackground = backgroundUrlStyle(imgUrl)
 
 export function ProtectedRoutes() {
     const [token, setToken] = useState(undefined);
-    const [pending, startTransition] = useTransition();
     
     const spinnerStyle = {
         position: 'absolute',
@@ -18,22 +18,7 @@ export function ProtectedRoutes() {
     }
 
     useEffect(() => {
-        setTimeout(() => {        
-            startTransition(() => {
-                if(localStorage.getItem('token')) {
-                    fetch(`http://localhost:3000/api/user/${localStorage.getItem('token')}`)
-                        .then(res => {
-                            if(res.status === 200) {
-                                setToken(localStorage.getItem('token'));
-                            } else {
-                                setToken(false);
-                            }
-                        })
-                } else {
-                    setToken(false)
-                } 
-            })
-        }, 1000);
+        userIdentifier(setToken);
     }, []);
     
     if(token === undefined) {

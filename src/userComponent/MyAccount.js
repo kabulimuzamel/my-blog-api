@@ -3,6 +3,9 @@ import { Container, Alert, CloseButton, Form, FormGroup, Button, Modal, Image } 
 import { UserHeader } from "../bodyComponent/UserHeader";
 import { Navigate } from "react-router-dom";
 import { backgroundUrlStyle } from '../Style/backgroundUrlStyle';
+import { updateInfoHandler, deleteInfoHandler } from "../Functions/apiCallFunctions";
+const { toShowIconUrl, toHideIconUrl, passwordIconStyle, showPassIconHandler } = require('../Style/passwordHandler');
+
 const imgUrl = require('../Images/creating.avif')
 const BodyBackground = backgroundUrlStyle(imgUrl)
 
@@ -17,25 +20,6 @@ export function MyAccount() {
     const [show, setShow] = useState(false);
     const [toShowPassword, setToShowPassword] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-
-    const toShowIconUrl = 'https://img.icons8.com/?size=512&id=38869&format=png'
-    const toHideIconUrl = 'https://img.icons8.com/?size=512&id=r9g0CfaDv5fz&format=png';
-
-    const passwordIcon = {
-        height: '2rem',
-        width: '2rem',
-        position: 'absolute',
-        top: '34px',
-        right: '10px',
-        transition: 'transform 0.4s',
-        transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-        cursor: isHovered ? 'pointer' : 'auto'
-    }
-
-    const showPassIconHandler = (e) => {
-        e.preventDefault();
-        toShowPassword ? setToShowPassword(false) : setToShowPassword(true);
-    }
 
     useEffect(() => {
         if(!token) {
@@ -53,75 +37,43 @@ export function MyAccount() {
         }
     }, [token]);
 
-    const updateInfoHandler = (e) => {
-        e.preventDefault();
-        if(!name || !userName || !password) {
-            setAlertMessageVariant('danger');
-            setAlertMessage('You cannot leave name, username, and password blank');
-            return;
-        }
-        
-        fetch(`http://localhost:3000/api/user/${token}`, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, userName, password })
-        })
-            .then(res => {
-                if(res.status === 200) {
-                    setAlertMessageVariant('success');
-                    setAlertMessage('Updated Successfully');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000)
-                } else {
-                    res.json(res => {
-                        setAlertMessageVariant('danger');
-                        setAlertMessage(res.error);
-                    })
-                }
-            });
-    };
-
-    const deleteInfoHandler = (e) => {
-        e.preventDefault();
-        fetch(`http://localhost:3000/api/user/${token}`, {
-            method: 'DELETE',
-        })
-            .then(res => {
-                if(res.status === 200) {
-                    setAlertMessageVariant('success')
-                    setAlertMessage('Your account was deleted successfully with all the posts you had published');
-                    setTimeout(() => {
-                        setIsDeleted(true);
-                    }, 1000)
-                }
-            });
-    };
-
     if(isDeleted) {
         return <Navigate to="/LoginPage" />
     };
 
     return (
         <>
-            <BodyBackground/>
+            <BodyBackground />
             <Modal show={show}>
                 <Modal.Header>
-                    <CloseButton onClick={() => setShow(false)}/>
+                    <CloseButton onClick={() => setShow(false)} />
                 </Modal.Header>
                 <Modal.Body>
-                    <Modal.Title>Are you sure you wanna delete you account?</Modal.Title>
+                    <Modal.Title>
+                        Are you sure you wanna delete you account?
+                    </Modal.Title>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button className="btn-sm" variant="primary" onClick={deleteInfoHandler}>
+                    <Button
+                        className='btn-sm'
+                        variant='primary'
+                        onClick={(event) =>
+                            deleteInfoHandler(
+                                event,
+                                token,
+                                setAlertMessageVariant,
+                                setAlertMessage,
+                                setIsDeleted
+                            )
+                        }>
                         Yes
                     </Button>
-                    <Button className="btn-sm" variant="danger" onClick={() => setShow(false)}>
+                    <Button
+                        className='btn-sm'
+                        variant='danger'
+                        onClick={() => setShow(false)}>
                         No
-                    </Button>       
+                    </Button>
                 </Modal.Footer>
             </Modal>
             <UserHeader />
@@ -156,31 +108,43 @@ export function MyAccount() {
                             onChange={(e) => setUserName(e.target.value)}
                         />
                     </FormGroup>
-                    <FormGroup  className="position-relative">
+                    <FormGroup className='position-relative'>
                         <Form.Label className='text-light'>Password</Form.Label>
                         <Form.Control
                             className='text-bg-dark'
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            type={toShowPassword ? "text" : "password"}
+                            type={toShowPassword ? 'text' : 'password'}
                         />
-                        <Image 
-                            src={toShowPassword ? toHideIconUrl : toShowIconUrl } 
-                            style={passwordIcon}
+                        <Image
+                            src={toShowPassword ? toHideIconUrl : toShowIconUrl}
+                            style={passwordIconStyle(isHovered)}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
-                            onClick={showPassIconHandler}
-                        />                        
+                            onClick={(event) =>
+                                showPassIconHandler(event, toShowPassword, setToShowPassword)
+                            }
+                        />
                     </FormGroup>
-                    <div className="d-flex flex-column justify-content-center align-items-center">
-                        <Button className='mt-3 btn-light btn-sm'
-                            onClick={updateInfoHandler}
-                        >
+                    <div className='d-flex flex-column justify-content-center align-items-center'>
+                        <Button
+                            className='mt-3 btn-light btn-sm'
+                            onClick={(event) =>
+                                updateInfoHandler(
+                                    event,
+                                    name,
+                                    userName,
+                                    password,
+                                    setAlertMessageVariant,
+                                    setAlertMessage,
+                                    token
+                                )
+                            }>
                             Update my account info
                         </Button>
-                        <Button className='mt-3 btn-danger btn-sm'
-                            onClick={() => setShow(true)}
-                        >
+                        <Button
+                            className='mt-3 btn-danger btn-sm'
+                            onClick={() => setShow(true)}>
                             Delete my account
                         </Button>
                     </div>
